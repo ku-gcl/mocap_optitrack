@@ -20,13 +20,24 @@ const geometry_msgs::Pose RigidBody::get_ros_pose()
 {
   geometry_msgs::Pose ros_pose;
 
-  // y & z axes are swapped in the Optitrack coordinate system
-  ros_pose.position.x = pose.position.x;
-  ros_pose.position.y = -pose.position.z;
+  // // y & z axes are swapped in the Optitrack coordinate system
+  // ros_pose.position.x = pose.position.x;
+  // ros_pose.position.y = -pose.position.z;
+  // ros_pose.position.z = pose.position.y;
+
+  // ros_pose.orientation.x = pose.orientation.x;
+  // ros_pose.orientation.y = -pose.orientation.z;
+  // ros_pose.orientation.z = pose.orientation.y;
+  // ros_pose.orientation.w = pose.orientation.w;
+
+  // x, y & z axes are swapped in the Optitrack coordinate system
+  // Optitrack coordinate system to East-North-Up
+  ros_pose.position.x = pose.position.z;
+  ros_pose.position.y = -pose.position.x;
   ros_pose.position.z = pose.position.y;
 
-  ros_pose.orientation.x = pose.orientation.x;
-  ros_pose.orientation.y = -pose.orientation.z;
+  ros_pose.orientation.x = pose.orientation.z;
+  ros_pose.orientation.y = -pose.orientation.x;
   ros_pose.orientation.z = pose.orientation.y;
   ros_pose.orientation.w = pose.orientation.w;
 
