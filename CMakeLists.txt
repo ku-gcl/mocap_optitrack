@@ -1,28 +1,48 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 3.0.2)
+project(mocap_optitrack)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-set(ROS_BUILD_TYPE RelWithDebInfo)
+## Find catkin macros and libraries
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  geometry_msgs
+  tf
+)
 
-rosbuild_init()
+## Your package locations should be listed before other locations
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-SET( MOCAP_SRCS
+## Declare a C++ library
+add_library(${PROJECT_NAME}
   src/mocap_datapackets.cpp
   src/mocap_config.cpp
   src/Socket.cpp
-  src/mocap_node.cpp
 )
 
-rosbuild_add_executable( mocap_node ${MOCAP_SRCS} ) 
-rosbuild_make_distribution(0.1.0)
+## Declare a C++ executable
+add_executable(mocap_node src/mocap_node.cpp)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(mocap_node
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
+
+## Mark executables and/or libraries for installation
+install(TARGETS mocap_node ${PROJECT_NAME}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+## Mark other files for installation (e.g. launch and bag files, etc.)
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp geometry_msgs tf
+)
